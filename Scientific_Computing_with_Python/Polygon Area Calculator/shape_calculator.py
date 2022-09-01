@@ -42,9 +42,10 @@ class Rectangle:
 
 class Square(Rectangle):
     def __init__(self, side):
-        # super().__init__(self, width, height)
-        self.width = side
-        self.height = side
+        super().__init__(side, side)
+        # Rectangle.__init__(self, side, side)
+        # self.width = side
+        # self.height = side
 
     def __str__(self):
         description = "Square(side=" + str(self.width) + ")"
