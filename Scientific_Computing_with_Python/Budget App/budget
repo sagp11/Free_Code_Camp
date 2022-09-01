@@ -1,0 +1,123 @@
+class Category:
+    # name = ""
+    # ledger = []
+    def __init__(self, name, ledger = [], balance = 0):
+        self.name = name
+        ledger = []
+        self.ledger = ledger
+        self.balance = balance
+        # print(self.name)
+        # print(self.ledger)
+
+
+    def __str__(self):
+        total_len = 30
+        x = self.name.center(30,"*")
+        final_str = x
+        count = 0
+        for i in self.ledger:
+            desc = i["description"]
+            amnt = i["amount"]
+            # print(i)
+            # print(len(desc))
+            if count == 0:
+                str4 = "Total: " + str(amnt)
+                count = count + 1
+                continue
+            elif len(desc) < 24 :
+                # print(desc)
+                str1 = desc
+                str2 = str(amnt).rjust(total_len-len(str1))
+                str3 = str1 + str2
+            else:
+                str1 = desc[:23]
+                str2 = str(amnt).rjust(total_len-len(str1))
+                str3 = str1 + str2
+
+            final_str = final_str + '\n' + str3
+            count = count + 1
+        final_str = final_str + '\n' + str4
+
+        return final_str
+
+
+    def deposit(self, amount, description = None):
+
+        if description is None :
+            temp1 = {"amount" : amount, "description" : ""}
+            temp5 = {"amount" : amount, "description" : ""}
+        else:
+            temp1 = {"amount" : amount, "description" : description}
+            temp5 = {"amount" : amount, "description" : description}
+
+        self.ledger.append(temp1)
+        # initial_value = temp1
+        self.ledger.append(temp5)
+        # print(self.ledger)
+
+
+    def withdraw(self, withdraw_amount, description = None):
+        if description is None :
+            temp2 = {"amount" : -withdraw_amount, "description" : ""}
+        else:
+            temp2 = {"amount" : -withdraw_amount, "description" : description}
+
+        if len(self.ledger) < 1:
+            return False
+        # elif self.ledger[0]["amount"] - withdraw_amount < 0 :
+        elif self.check_funds(withdraw_amount) == False :
+            return False
+        else:
+            self.ledger[0]["amount"] = self.ledger[0]["amount"] - withdraw_amount
+            self.ledger.append(temp2)
+            return True
+
+
+
+    def transfer(self, transfer_amount, category):
+        temp3 = "Transfer to " + category.name
+        temp4 = "Transfer from " + self.name
+        # if self.withdraw(transfer_amount,temp3) == True :
+        if self.check_funds(transfer_amount) == True :
+            self.withdraw(transfer_amount,temp3)
+            category.deposit(transfer_amount, temp4)
+            return True
+        else:
+            return False
+
+    def check_funds(self, funds) :
+        if (funds > self.ledger[0]["amount"]):
+            return False
+        else:
+            return True
+
+
+    def get_balance(self):
+        try :
+            return self.ledger[0]["amount"]
+        except :
+            return 0
+
+
+def create_spend_chart(categories):
+    num_categories = len(categories)
+    # print(categories[0].ledger)
+    total_withdrawl = 0
+    each_withdrawl = {}
+    count = 0
+    for i in categories:
+        temp_ledger = i.ledger
+        temp_name = i.name
+        each_withdrawl[temp_name] = each_withdrawl.get(temp_name,0)
+        # print(temp_name,'\n')
+        for j in temp_ledger:
+            if j["amount"] < 0 :
+                total_withdrawl = (total_withdrawl - j["amount"])
+                each_withdrawl[temp_name] = each_withdrawl[temp_name] -j["amount"]
+                # print(j)
+                # print(total_withdrawl)
+        # print('\n')
+        # print(total_withdrawl)
+
+    # print(total_withdrawl)
+    # print(each_withdrawl)
